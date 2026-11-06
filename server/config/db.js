@@ -4,6 +4,9 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongodInstance = null;
 
 export const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
   try {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/college_admission';
     

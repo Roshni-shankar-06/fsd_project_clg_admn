@@ -16,13 +16,30 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for frontend Vite client
+// Enable CORS for frontend Vite client & Vercel deployments
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      // or from localhost and any vercel preview/production domain
+      if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true
   })
 );
+
+// Ensure DB is connected for serverless invocations
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Body parser
 app.use(express.json());
@@ -108,4 +125,9 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Start local server if not running inside a serverless / Vercel environment
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;

@@ -13,7 +13,8 @@ export default function DatabaseViewerPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://127.0.0.1:5000/api/dev/db-summary');
+      const apiBase = import.meta.env.VITE_API_BASE_URL || '/api';
+      const res = await fetch(`${apiBase}/dev/db-summary`);
       const json = await res.json();
       if (json && json.success) {
         setData(json);
@@ -310,13 +311,13 @@ export default function DatabaseViewerPage() {
                   </tr>
                   <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '0.75rem 0', fontWeight: 600, color: '#64748b' }}>Backend Server URL</td>
-                    <td style={{ padding: '0.75rem 0', color: '#2563eb', fontWeight: 600 }}>http://127.0.0.1:5000</td>
+                    <td style={{ padding: '0.75rem 0', color: '#2563eb', fontWeight: 600 }}>{import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace(/\/api$/, '') : '/api (Integrated Vercel Service)'}</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '0.75rem 0', fontWeight: 600, color: '#64748b' }}>Direct REST API Inspector URL</td>
                     <td style={{ padding: '0.75rem 0', color: '#2563eb' }}>
-                      <a href="http://127.0.0.1:5000/api/dev/db-summary" target="_blank" rel="noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                        http://127.0.0.1:5000/api/dev/db-summary
+                      <a href={`${import.meta.env.VITE_API_BASE_URL || '/api'}/dev/db-summary`} target="_blank" rel="noreferrer" style={{ color: '#2563eb', textDecoration: 'underline' }}>
+                        {`${import.meta.env.VITE_API_BASE_URL || '/api'}/dev/db-summary`}
                       </a>
                     </td>
                   </tr>
